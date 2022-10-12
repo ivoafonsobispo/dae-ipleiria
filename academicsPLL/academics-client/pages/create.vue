@@ -40,7 +40,7 @@ export default {
     }
   },
   created() {
-    this.$axios.$get('/api/courses')
+    this.$axios.$get('/api/courses/all')
       .then(courses => {
         this.courses = courses
       })

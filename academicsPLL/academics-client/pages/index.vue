@@ -1,10 +1,12 @@
 <template>
   <!-- easy components usage, already shipped with bootstrap css-->
+  <div>
   <b-container>
     <!-- try to remove :fields=”fields” to see the magic -->
     <b-table striped over :items="students" :fields="fields" />
   </b-container>
   <nuxt-link to="/create">Create a New Student</nuxt-link>
+  </div>
 </template>
 <script>
 export default {
