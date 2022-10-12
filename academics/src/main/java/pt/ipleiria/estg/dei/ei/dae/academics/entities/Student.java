@@ -1,9 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.academics.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -13,19 +12,36 @@ import java.io.Serializable;
                 query = "SELECT s FROM Student s ORDER BY s.name" // JPQL
         )
 })
+
+@Table(name = "students")
+
 public class Student implements Serializable {
     @Id
     String username;
-    String password, name, email;
+    @NotNull
+    String password, name;
+    @NotNull
+    @Email
+    String email;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "course_code")
+    Course course;
 
     public Student() {
+        username = "";
+        password = "";
+        name = "";
+        email = "";
+        course = new Course();
     }
 
-    public Student(String username, String password, String name, String email) {
+    public Student(String username, String password, String name, String email, Course course) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.email = email;
+        this.course = course;
     }
 
     public String getUsername() {
@@ -59,4 +75,13 @@ public class Student implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
 }

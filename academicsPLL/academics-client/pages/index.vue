@@ -4,6 +4,7 @@
     <!-- try to remove :fields=”fields” to see the magic -->
     <b-table striped over :items="students" :fields="fields" />
   </b-container>
+  <nuxt-link to="/create">Create a New Student</nuxt-link>
 </template>
 <script>
 export default {
