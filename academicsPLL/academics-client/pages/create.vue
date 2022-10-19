@@ -1,17 +1,9 @@
 <template>
   <form @submit.prevent="create">
-    <div>
-      username: <input v-model="username" type="text">
-    </div>
-    <div>
-      password: <input v-model="password" type="password">
-    </div>
-    <div>
-      name: <input v-model="name" type="text">
-    </div>
-    <div>
-      email: <input v-model="email" type="email">
-    </div>
+    <div>username: <input v-model="username" type="text" /></div>
+    <div>password: <input v-model="password" type="password" /></div>
+    <div>name: <input v-model="name" type="text" /></div>
+    <div>email: <input v-model="email" type="email" /></div>
     <div>
       course code:
       <select v-model="courseCode">
@@ -36,29 +28,29 @@ export default {
       name: null,
       email: null,
       courseCode: null,
-      courses: []
-    }
+      courses: [],
+    };
   },
   created() {
-    this.$axios.$get('/api/courses/all')
-      .then(courses => {
-        this.courses = courses
-      })
+    this.$axios.$get("/api/courses/all").then((courses) => {
+      this.courses = courses;
+    });
   },
   methods: {
     create() {
-      this.$axios.$post('/api/students', {
-        username: this.username,
-        password: this.password,
-        name: this.name,
-        email: this.email,
-        courseCode: this.courseCode
-      })
-        .then(() => {
-          this.$router.push('/')
+      this.$axios
+        .$post("/api/students", {
+          username: this.username,
+          password: this.password,
+          name: this.name,
+          email: this.email,
+          courseCode: this.courseCode,
         })
-    }
-  }
-}
+        .then(() => {
+          this.$router.push("/");
+        });
+    },
+  },
+};
 </script>
 }

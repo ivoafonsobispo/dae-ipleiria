@@ -1,79 +1,52 @@
 package pt.ipleiria.estg.dei.ei.dae.academics.entities;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(
-                name = "getAllStudents",
-                query = "SELECT s FROM Student s ORDER BY s.name" // JPQL
-        )
+    @NamedQuery(
+        name = "getAllStudents",
+        query = "SELECT s FROM Student s ORDER BY s.name" // JPQL
+    )
 })
 
-@Table(name = "students")
-
-public class Student implements Serializable {
-    @Id
-    String username;
-    @NotNull
-    String password, name;
-    @NotNull
-    @Email
-    String email;
+public class Student extends User implements Serializable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "course_code")
     Course course;
 
+    @NotNull
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "students")
+    List<Subject> subjects;
+
     public Student() {
-        username = "";
-        password = "";
-        name = "";
-        email = "";
         course = new Course();
+        subjects = new LinkedList<>();
     }
 
     public Student(String username, String password, String name, String email, Course course) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        super(username, password, name, email);
         this.course = course;
+        subjects = new LinkedList<>();
     }
 
-    public String getUsername() {
-        return username;
+    public void add(Subject subject) {
+        if (subject == null || subjects.contains(subject)) {
+            return;
+        }
+        subjects.add(subject);
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void remove(Subject subject) {
+        if (subject == null || !subjects.contains(subject)) {
+            return;
+        }
+        subjects.remove(subject);
     }
 
     public Course getCourse() {
@@ -84,4 +57,11 @@ public class Student implements Serializable {
         this.course = course;
     }
 
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
+    }
 }
