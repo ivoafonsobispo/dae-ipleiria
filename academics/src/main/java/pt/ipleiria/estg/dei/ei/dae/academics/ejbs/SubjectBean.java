@@ -1,7 +1,9 @@
 package pt.ipleiria.estg.dei.ei.dae.academics.ejbs;
 
+import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
+import pt.ipleiria.estg.dei.ei.dae.academics.entities.Teacher;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,5 +23,17 @@ public class SubjectBean {
 
     public List<Subject> getAllSubjects() {
         return (List<Subject>) em.createNamedQuery("getAllSubjects").getResultList();
+    }
+
+    public Subject find(long code) {
+        return em.find(Subject.class, code);
+    }
+
+    public List<Teacher> getAllTeachersOfSubject(long code) {
+        Subject subject = em.find(Subject.class, code);
+        if (subject == null)
+            return null;
+        Hibernate.initialize(subject.getTeachers());
+        return subject.getTeachers();
     }
 }

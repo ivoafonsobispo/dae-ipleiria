@@ -1,0 +1,133 @@
+package pt.ipleiria.estg.dei.ei.dae.academics.ws;
+
+import pt.ipleiria.estg.dei.ei.dae.academics.dtos.SubjectDTO;
+import pt.ipleiria.estg.dei.ei.dae.academics.dtos.TeacherDTO;
+import pt.ipleiria.estg.dei.ei.dae.academics.ejbs.TeacherBean;
+import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
+import pt.ipleiria.estg.dei.ei.dae.academics.entities.Teacher;
+
+import javax.ejb.EJB;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Path("teachers") // relative url web path for this service
+@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
+@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
+
+public class TeacherService {
+
+    @EJB
+    private TeacherBean teacherBean;
+
+    @GET // means: to call this endpoint, we need to use the HTTP GET method
+    @Path("/all") // means: the relative url path is “/api/students/”
+    public List<TeacherDTO> getAllTeachersWS() {
+        return toDTOs(teacherBean.getAllTeachers());
+    }
+
+    // Converts an entity Student to a DTO Student class
+    private TeacherDTO toDTO(Teacher teacher) {
+        return new TeacherDTO(
+            teacher.getUsername(),
+            teacher.getPassword(),
+            teacher.getName(),
+            teacher.getEmail(),
+            teacher.getOffice()
+        );
+    }
+
+    private SubjectDTO toDTO(Subject subject) {
+        return new SubjectDTO(
+            subject.getCode(),
+            subject.getName(),
+            subject.getCourse().getName(),
+            subject.getCourse().getCode(),
+            subject.getCourseYear(),
+            subject.getScholarYear()
+        );
+    }
+
+    private List<TeacherDTO> toDTOs(List<Teacher> teachers) {
+        return teachers.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    private List<SubjectDTO> SubjectstoDTOs(List<Subject> subjects) {
+        return subjects.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @POST
+    @Path("/{username}/{code}")
+    public Response associateTeacherToSubject(@PathParam("username") String username, @PathParam("code") long subjectCode) {
+        boolean isValid = teacherBean.associateTeacherToSubject(username, subjectCode);
+        //TODO: Question: Validation in on the Service or the Bean
+        if (!isValid)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.ACCEPTED).build();
+    }
+
+    @GET
+    @Path("/{username}/subjects")
+    public List<SubjectDTO> getAllSubjectsOfTeacherWS(@PathParam("username") String username) {
+        return SubjectstoDTOs(teacherBean.getAllSubjectsOfTeacher(username));
+    }
+
+    @POST
+    @Path("/")
+    public Response create(TeacherDTO teacherDTO) {
+        teacherBean.create(
+            teacherDTO.getUsername(),
+            teacherDTO.getPassword(),
+            teacherDTO.getName(),
+            teacherDTO.getEmail(),
+            teacherDTO.getOffice()
+        );
+
+        Teacher newTeacher = teacherBean.find(teacherDTO.getUsername());
+        if (newTeacher == null)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.CREATED).entity(toDTO(newTeacher)).build();
+    }
+
+    @GET
+    @Path("/{username}")
+    public Response getTeacher(@PathParam("username") String username) {
+        Teacher teacher = teacherBean.find(username);
+        if (teacher != null) {
+            return Response.ok(toDTO(teacher)).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+            .entity("ERROR_FINDING_STUDENT")
+            .build();
+    }
+
+    @PUT
+    @Path("/{username}")
+    public Response updateTeacher(@PathParam("username") String username, TeacherDTO teacherDTO) {
+        Teacher teacher = teacherBean.find(username);
+        if (teacher == null)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        teacherBean.update(
+            username,
+            teacherDTO.getPassword(),
+            teacherDTO.getName(),
+            teacherDTO.getEmail(),
+            teacherDTO.getOffice()
+        );
+
+        Teacher updatedTeacher = teacherBean.find(username);
+        return Response.status(Response.Status.ACCEPTED).entity(toDTO(updatedTeacher)).build();
+    }
+
+    @DELETE
+    @Path("/{username}")
+    public Response deleteTeacher(@PathParam("username") String username) {
+        boolean deleted = teacherBean.delete(username);
+        if (!deleted)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.OK).build();
+    }
+}

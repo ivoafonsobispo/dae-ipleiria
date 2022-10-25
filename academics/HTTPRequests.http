@@ -19,8 +19,7 @@ Content-Type: application/json
 GET http://localhost:8080/academics/api/courses/all
 Accept: application/json
 
-###
-
+### Add Course
 POST http://localhost:8080/academics/api/courses
 Content-Type: application/json
 
@@ -36,4 +35,65 @@ Accept: application/json
 ##### Student Subjects
 GET http://localhost:8080/academics/api/students/ivoafonsobispo/subjects
 Accept: application/json
+
+##### Subjects
+GET http://localhost:8080/academics/api/subjects/all
+Accept: application/json
+
+##### Specific Subject
+GET http://localhost:8080/academics/api/subjects/1
+Accept: application/json
+
+##### Subject Students
+GET http://localhost:8080/academics/api/subjects/1/students
+Accept: application/json
+
+##### Teachers
+GET http://localhost:8080/academics/api/teachers/all
+Accept: application/json
+
+##### Associate Subject to Teacher
+POST http://localhost:8080/academics/api/teachers/mariajoana/2
+Content-Type: application/json
+
+##### GET Teacher Subjects
+GET http://localhost:8080/academics/api/teachers/mariajoana/subjects
+Accept: application/json
+
+##### GET Subject Teachers
+GET http://localhost:8080/academics/api/subjects/1/teachers
+Accept: application/json
+
+### Create Course
+POST http://localhost:8080/academics/api/teachers
+Content-Type: application/json
+
+{
+  "email": "ivo@mail.pt",
+  "name": "Ivo Bispo",
+  "office": "L-33",
+  "password": "ivoivo",
+  "username": "ivoafobispo"
+}
+
+##### Find Teacher
+GET http://localhost:8080/academics/api/teachers/ivoafobispo
+Content-Type: application/json
+
+##### Update Teacher
+PUT http://localhost:8080/academics/api/teachers/ivoafobispo
+Content-Type: application/json
+
+{
+  "email": "ivo@mail.pt",
+  "name": "Jose Areia",
+  "office": "L-33",
+  "password": "ivoivo",
+  "username": "ivoafobispo"
+}
+
+##### Delete Teacher
+DELETE http://localhost:8080/academics/api/teachers/ivoafobispo
+Content-Type: application/json
+
 

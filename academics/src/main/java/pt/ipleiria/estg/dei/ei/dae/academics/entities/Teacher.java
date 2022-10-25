@@ -2,12 +2,21 @@ package pt.ipleiria.estg.dei.ei.dae.academics.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 @Entity
+@NamedQueries({
+    @NamedQuery(
+        name = "getAllTeachers",
+        query = "SELECT t FROM Teacher t ORDER BY t.name" // JPQL
+    ),
+})
+
 public class Teacher extends User implements Serializable {
     @NotNull
     String office;
@@ -24,5 +33,21 @@ public class Teacher extends User implements Serializable {
         super(username, password, name, email);
         this.office = office;
         subjects = new LinkedList<>();
+    }
+
+    public String getOffice() {
+        return office;
+    }
+
+    public void setOffice(String office) {
+        this.office = office;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
     }
 }

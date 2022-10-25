@@ -14,7 +14,6 @@ public class StudentBean {
     @PersistenceContext
     EntityManager em;
 
-
     public void create(String username, String password, String name, String email, long course_code) {
         Course course = em.find(Course.class, course_code);
 

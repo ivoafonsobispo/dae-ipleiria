@@ -32,7 +32,7 @@ public class Subject implements Serializable {
     @Column(name = "scholar_year")
     int scholarYear;
     @NotNull
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "subjects_students",
         joinColumns = @JoinColumn(name = "subject_code", referencedColumnName = "code"),
         inverseJoinColumns = @JoinColumn(name = "student_username", referencedColumnName = "username"))
@@ -74,6 +74,22 @@ public class Subject implements Serializable {
 
         students.remove(student);
     }
+
+    public void associate(Teacher teacher) {
+        if (teacher == null || teachers.contains(teacher)) {
+            return;
+        }
+        teachers.add(teacher);
+    }
+
+    public void dissociate(Teacher teacher) {
+        if (teacher == null || !teachers.contains(teacher)) {
+            return;
+        }
+
+        teachers.remove(teacher);
+    }
+
 
     public long getCode() {
         return code;

@@ -30,15 +30,19 @@ public class ConfigBean {
 
         // Creates Student in DB
         studentBean.create("ivoafonsobispo", "yesyes", "Ivo Afonso Bispo", "ivoafobispo@gmail.com", 9119);
+        studentBean.create("anamartin", "agostosa", "Ana Luisa Pinto Martin", "anamartin@gmail.com", 9119);
 
         // Creates Subject in DB
         subjectBean.create(1, "Filosofia", courseBean.find(9119), 2001, 1);
         subjectBean.create(2, "Matematica", courseBean.find(9119), 2005, 2);
 
         studentBean.enrollStudentInSubject("ivoafonsobispo", 1);
+        studentBean.enrollStudentInSubject("anamartin", 1);
 
         administratorBean.create("josematias", "omatias", "Jose Matias", "josematias@mail.pt");
 
         teacherBean.create("mariajoana", "mariaejoana", "Maria Joana", "mariajoana@mail.pt", "L-31");
+
+        teacherBean.associateTeacherToSubject("mariajoana", 1);
     }
 }

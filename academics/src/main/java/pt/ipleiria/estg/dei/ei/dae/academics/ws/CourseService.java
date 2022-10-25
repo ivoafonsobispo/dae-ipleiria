@@ -1,10 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.academics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.academics.dtos.CourseDTO;
-import pt.ipleiria.estg.dei.ei.dae.academics.dtos.StudentDTO;
 import pt.ipleiria.estg.dei.ei.dae.academics.ejbs.CourseBean;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -19,7 +17,7 @@ import java.util.stream.Collectors;
 
 
 public class CourseService {
-@EJB
+    @EJB
     private CourseBean courseBean;
 
     @GET // means: to call this endpoint, we need to use the HTTP GET method
@@ -27,13 +25,15 @@ public class CourseService {
     public List<CourseDTO> getAllCoursesWS() {
         return toDTOs(courseBean.getAllCourses());
     }
+
     // Converts an entity Course to a DTO Course class
     private CourseDTO toDTO(Course course) {
         return new CourseDTO(
-                course.getCode(),
-                course.getName()
+            course.getCode(),
+            course.getName()
         );
     }
+
     // converts an entire list of entities into a list of DTOs
     private List<CourseDTO> toDTOs(List<Course> courses) {
         return courses.stream().map(this::toDTO).collect(Collectors.toList());
@@ -41,14 +41,14 @@ public class CourseService {
 
     @POST
     @Path("/")
-    public Response createNewCourse (CourseDTO courseDTO){
+    public Response createNewCourse(CourseDTO courseDTO) {
         courseBean.create(
-                courseDTO.getCode(),
-                courseDTO.getName()
+            courseDTO.getCode(),
+            courseDTO.getName()
         );
 
         Course newCourse = courseBean.find(courseDTO.getCode());
-        if(newCourse == null)
+        if (newCourse == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
         return Response.status(Response.Status.CREATED).entity(toDTO(newCourse)).build();
     }
