@@ -61,10 +61,11 @@ public class TeacherService {
     @POST
     @Path("/{username}/{code}")
     public Response associateTeacherToSubject(@PathParam("username") String username, @PathParam("code") long subjectCode) {
-        boolean isValid = teacherBean.associateTeacherToSubject(username, subjectCode);
-        //TODO: Question: Validation in on the Service or the Bean
-        if (!isValid)
+        try {
+            teacherBean.associateTeacherToSubject(username, subjectCode);
+        } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         return Response.status(Response.Status.ACCEPTED).build();
     }
 
@@ -77,57 +78,61 @@ public class TeacherService {
     @POST
     @Path("/")
     public Response create(TeacherDTO teacherDTO) {
-        teacherBean.create(
-            teacherDTO.getUsername(),
-            teacherDTO.getPassword(),
-            teacherDTO.getName(),
-            teacherDTO.getEmail(),
-            teacherDTO.getOffice()
-        );
-
-        Teacher newTeacher = teacherBean.find(teacherDTO.getUsername());
-        if (newTeacher == null)
+        Teacher teacher;
+        try {
+            teacher = teacherBean.create(
+                teacherDTO.getUsername(),
+                teacherDTO.getPassword(),
+                teacherDTO.getName(),
+                teacherDTO.getEmail(),
+                teacherDTO.getOffice()
+            );
+        } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
-        return Response.status(Response.Status.CREATED).entity(toDTO(newTeacher)).build();
+        }
+        return Response.status(Response.Status.CREATED).entity(toDTO(teacher)).build();
     }
 
     @GET
     @Path("/{username}")
     public Response getTeacher(@PathParam("username") String username) {
-        Teacher teacher = teacherBean.find(username);
-        if (teacher != null) {
-            return Response.ok(toDTO(teacher)).build();
+        Teacher teacher;
+        try {
+            teacher = teacherBean.find(username);
+        } catch (Exception exception) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("ERROR_FINDING_STUDENT")
+                .build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-            .entity("ERROR_FINDING_STUDENT")
-            .build();
+        return Response.ok(toDTO(teacher)).build();
     }
 
     @PUT
     @Path("/{username}")
     public Response updateTeacher(@PathParam("username") String username, TeacherDTO teacherDTO) {
-        Teacher teacher = teacherBean.find(username);
-        if (teacher == null)
+        Teacher updatedTeacher;
+        try {
+            updatedTeacher = teacherBean.update(
+                username,
+                teacherDTO.getPassword(),
+                teacherDTO.getName(),
+                teacherDTO.getEmail(),
+                teacherDTO.getOffice()
+            );
+        } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
-
-        teacherBean.update(
-            username,
-            teacherDTO.getPassword(),
-            teacherDTO.getName(),
-            teacherDTO.getEmail(),
-            teacherDTO.getOffice()
-        );
-
-        Teacher updatedTeacher = teacherBean.find(username);
+        }
         return Response.status(Response.Status.ACCEPTED).entity(toDTO(updatedTeacher)).build();
     }
 
     @DELETE
     @Path("/{username}")
     public Response deleteTeacher(@PathParam("username") String username) {
-        boolean deleted = teacherBean.delete(username);
-        if (!deleted)
+        try {
+            teacherBean.delete(username);
+        } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         return Response.status(Response.Status.OK).build();
     }
 }

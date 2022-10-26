@@ -19,33 +19,29 @@ public class TeacherBean {
         return (List<Teacher>) em.createNamedQuery("getAllTeachers").getResultList();
     }
 
-    public void create(String username, String password, String name, String email, String office) {
+    public Teacher create(String username, String password, String name, String email, String office) {
         Teacher teacher = new Teacher(username, password, name, email, office);
         em.persist(teacher);
+        return em.find(Teacher.class, username);
     }
 
-    public void update(String username, String password, String name, String email, String office) {
+    public Teacher update(String username, String password, String name, String email, String office) {
         Teacher teacher = em.find(Teacher.class, username);
-        if (teacher == null)
-            return;
-
         teacher.setPassword(password);
         teacher.setName(name);
         teacher.setEmail(email);
         teacher.setOffice(office);
+        return teacher;
     }
 
-    public boolean associateTeacherToSubject(String username, long subjectCode) {
+    public void associateTeacherToSubject(String username, long subjectCode) {
         Teacher teacher = em.find(Teacher.class, username);
         Subject subject = em.find(Subject.class, subjectCode);
-
         Course courseOfSubject = em.find(Course.class, subject.getCourse().getCode());
 
         if (courseOfSubject != null && teacher != null) {
             subject.associate(teacher);
-            return true;
         }
-        return false;
     }
 
     public void dissociateTeacherToSubject(String username, long subjectCode) {
@@ -72,11 +68,8 @@ public class TeacherBean {
         return em.find(Teacher.class, username);
     }
 
-    public boolean delete(String username) {
+    public void delete(String username) {
         Teacher teacher = em.find(Teacher.class, username);
-        if (teacher == null)
-            return false;
         em.remove(teacher);
-        return true;
     }
 }

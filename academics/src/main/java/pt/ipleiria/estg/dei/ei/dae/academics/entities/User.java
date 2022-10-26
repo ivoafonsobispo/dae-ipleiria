@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 
-public class User implements Serializable {
+public class User extends Versionable implements Serializable {
     @Id
     private String username;
     @NotNull
@@ -19,6 +19,9 @@ public class User implements Serializable {
     @Email
     @NotNull
     private String email;
+
+    @Version
+    private int version;
 
     public User() {
     }

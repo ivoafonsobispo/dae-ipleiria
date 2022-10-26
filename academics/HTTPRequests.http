@@ -2,15 +2,14 @@
 GET http://localhost:8080/academics/api/students/all
 Accept: application/json
 
-###
-
+### Create Student
 POST http://localhost:8080/academics/api/students
 Content-Type: application/json
 
 {
   "email": "johndoe@mail.com",
   "name": "John Doe",
-  "username": "john",
+  "username": "ivoafonsobispo",
   "password": "jd",
   "courseCode": 9119
 }
@@ -24,8 +23,8 @@ POST http://localhost:8080/academics/api/courses
 Content-Type: application/json
 
 {
-  "code": 2,
-  "name": "Primeiro Curso"
+  "code": 3,
+  "name": "New Course Clean Code"
 }
 
 ##### Student Details
@@ -64,7 +63,7 @@ Accept: application/json
 GET http://localhost:8080/academics/api/subjects/1/teachers
 Accept: application/json
 
-### Create Course
+### Create Teacher
 POST http://localhost:8080/academics/api/teachers
 Content-Type: application/json
 
@@ -95,5 +94,17 @@ Content-Type: application/json
 ##### Delete Teacher
 DELETE http://localhost:8080/academics/api/teachers/ivoafobispo
 Content-Type: application/json
+
+##### Update Student
+PUT http://localhost:8080/academics/api/students/ivoafonsobispo
+Content-Type: application/json
+
+{
+  "email": "ivo@mail.pt",
+  "name": "Ivo Bispo Alterado",
+  "office": "L-33",
+  "password": "ivoivo",
+  "courseCode": 9119
+}
 
 

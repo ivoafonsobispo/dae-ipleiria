@@ -5,6 +5,8 @@ import pt.ipleiria.estg.dei.ei.dae.academics.dtos.SubjectDTO;
 import pt.ipleiria.estg.dei.ei.dae.academics.ejbs.StudentBean;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -64,32 +66,37 @@ public class StudentService {
     @GET
     @Path("/{username}")
     public Response getStudentDetails(@PathParam("username") String username) {
-        Student student = studentBean.find(username);
-        if (student != null) {
-            return Response.ok(toDTO(student)).build();
+        Student student;
+        try {
+            student = studentBean.find(username);
+        } catch (Exception exception) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("ERROR_FINDING_STUDENT")
+                .build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-            .entity("ERROR_FINDING_STUDENT")
-            .build();
+        return Response.ok(toDTO(student)).build();
     }
 
     @GET
     @Path("/{username}/subjects")
     public Response getStudentSubjects(@PathParam("username") String username) {
-        Student student = studentBean.find(username);
-        if (student != null) {
-            List<SubjectDTO> dtos = subjectsToDTOs(student.getSubjects());
-            return Response.ok(dtos).build();
+        List<SubjectDTO> listSubjects;
+        try {
+            listSubjects = subjectsToDTOs(studentBean.getSubjects(username));
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("ERROR_FINDING_STUDENT")
+                .build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-            .entity("ERROR_FINDING_STUDENT")
-            .build();
+        return Response.ok(listSubjects).build();
     }
 
     @POST
     @Path("/")
-    public Response createNewStudent(StudentDTO studentDTO) {
-        studentBean.create(
+    public Response create(StudentDTO studentDTO)
+        throws MyEntityExistsException, MyEntityNotFoundException {
+
+        Student student = studentBean.create(
             studentDTO.getUsername(),
             studentDTO.getPassword(),
             studentDTO.getName(),
@@ -97,9 +104,26 @@ public class StudentService {
             studentDTO.getCourseCode()
         );
 
-        Student newStudent = studentBean.find(studentDTO.getUsername());
-        if (newStudent == null)
+        return Response.status(Response.Status.CREATED)
+            .entity(toDTO(student))
+            .build();
+    }
+
+    @PUT
+    @Path("/{username}")
+    public Response update(@PathParam("username") String username, StudentDTO studentDTO) {
+        Student student;
+        try {
+            student = studentBean.update(
+                username,
+                studentDTO.getPassword(),
+                studentDTO.getName(),
+                studentDTO.getEmail(),
+                studentDTO.getCourseCode()
+            );
+        } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
-        return Response.status(Response.Status.CREATED).entity(toDTO(newStudent)).build();
+        }
+        return Response.status(Response.Status.ACCEPTED).entity(toDTO(student)).build();
     }
 }

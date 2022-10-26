@@ -19,7 +19,7 @@ import java.util.List;
 )
 
 @Entity
-public class Subject implements Serializable {
+public class Subject extends Versionable implements Serializable {
     @Id
     long code;
     @NotNull
@@ -44,6 +44,9 @@ public class Subject implements Serializable {
         joinColumns = @JoinColumn(name = "subject_code", referencedColumnName = "code"),
         inverseJoinColumns = @JoinColumn(name = "teacher_username", referencedColumnName = "username"))
     List<Teacher> teachers;
+
+    @Version
+    private int version;
 
     public Subject() {
         students = new LinkedList<>();

@@ -42,14 +42,12 @@ public class CourseService {
     @POST
     @Path("/")
     public Response createNewCourse(CourseDTO courseDTO) {
-        courseBean.create(
-            courseDTO.getCode(),
-            courseDTO.getName()
-        );
-
-        Course newCourse = courseBean.find(courseDTO.getCode());
-        if (newCourse == null)
+        Course newCourse;
+        try {
+            newCourse = courseBean.create(courseDTO.getCode(), courseDTO.getName());
+        } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         return Response.status(Response.Status.CREATED).entity(toDTO(newCourse)).build();
     }
 }

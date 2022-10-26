@@ -21,7 +21,7 @@ public class Student extends User implements Serializable {
     Course course;
 
     @NotNull
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "students")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "students")
     List<Subject> subjects;
 
     public Student() {

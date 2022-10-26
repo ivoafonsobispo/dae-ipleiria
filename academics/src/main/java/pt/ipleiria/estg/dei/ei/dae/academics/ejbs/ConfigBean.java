@@ -4,11 +4,13 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import java.util.logging.Logger;
 
 @Startup
 @Singleton
 public class ConfigBean {
 
+    private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
     @EJB
     CourseBean courseBean;
     @EJB
@@ -29,8 +31,12 @@ public class ConfigBean {
         courseBean.create(9200, "Engenharia dos Engenheiros");
 
         // Creates Student in DB
-        studentBean.create("ivoafonsobispo", "yesyes", "Ivo Afonso Bispo", "ivoafobispo@gmail.com", 9119);
-        studentBean.create("anamartin", "agostosa", "Ana Luisa Pinto Martin", "anamartin@gmail.com", 9119);
+        try {
+            studentBean.create("ivoafonsobispo", "yesyes", "Ivo Afonso Bispo", "ivoafobispo@gmail.com", 9119);
+            studentBean.create("anamartin", "agostosa", "Ana Luisa Pinto Martin", "anamartin@gmail.com", 9119);
+        } catch (Exception exception) {
+            logger.severe(exception.getMessage());
+        }
 
         // Creates Subject in DB
         subjectBean.create(1, "Filosofia", courseBean.find(9119), 2001, 1);

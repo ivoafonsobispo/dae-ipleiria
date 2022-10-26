@@ -66,27 +66,31 @@ public class SubjectService {
     @GET
     @Path("/{code}")
     public Response getSubjectDetails(@PathParam("code") long code) {
-        Subject subject = subjectBean.find(code);
-        if (subject != null) {
-            return Response.ok(toDTO(subject)).build();
+        Subject subject;
+        try {
+            subject = subjectBean.find(code);
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("ERROR_FINDING_STUDENT")
+                .build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-            .entity("ERROR_FINDING_STUDENT")
-            .build();
+        return Response.ok(toDTO(subject)).build();
     }
 
 
     @GET
     @Path("/{code}/students")
     public Response getSubjectStudents(@PathParam("code") long code) {
-        Subject subject = subjectBean.find(code);
-        if (subject != null) {
-            List<StudentDTO> dtos = studentsToDTOs(subject.getStudents());
-            return Response.ok(dtos).build();
+        List<StudentDTO> studentDTOList;
+        try {
+            List<Student> studentList = subjectBean.getAllStudents(code);
+            studentDTOList = studentsToDTOs(studentList);
+        } catch (Exception exception) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("ERROR_FINDING_STUDENT")
+                .build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-            .entity("ERROR_FINDING_STUDENT")
-            .build();
+        return Response.ok(studentDTOList).build();
     }
 
 

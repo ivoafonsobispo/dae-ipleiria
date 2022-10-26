@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.academics.ejbs;
 
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
+import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Teacher;
 
@@ -35,5 +36,10 @@ public class SubjectBean {
             return null;
         Hibernate.initialize(subject.getTeachers());
         return subject.getTeachers();
+    }
+
+    public List<Student> getAllStudents(long code) {
+        Subject subject = em.find(Subject.class, code);
+        return subject.getStudents();
     }
 }

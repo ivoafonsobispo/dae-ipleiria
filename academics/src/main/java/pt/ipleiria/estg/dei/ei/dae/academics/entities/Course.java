@@ -18,7 +18,7 @@ import java.util.List;
     name = "courses",
     uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
 )
-public class Course implements Serializable {
+public class Course extends Versionable implements Serializable {
     @Id
     long code;
     @NotNull
@@ -31,9 +31,10 @@ public class Course implements Serializable {
     @OneToMany
     List<Subject> subjects;
 
+    @Version
+    private int version;
+
     public Course() {
-        code = -1;
-        name = "";
         students = new LinkedList<>();
         subjects = new LinkedList<>();
     }
