@@ -19,46 +19,40 @@ public class StudentBean {
     EntityManager em;
 
     public Student create(String username, String password, String name, String email, long course_code)
-        throws MyEntityExistsException, MyEntityNotFoundException {
-        Course course;
-        Student student;
-        try {
-            course = em.find(Course.class, course_code);
-        } catch (Exception exception) {
+        throws Exception, MyEntityExistsException, MyEntityNotFoundException {
+        Course course = em.find(Course.class, course_code);
+        Student student = em.find(Student.class, username);
+        if (course == null)
             throw new MyEntityNotFoundException("Course does not Exist");
-        }
-        try {
-            em.find(Student.class, username);
-        } catch (Exception exception) {
+        if (student != null)
             throw new MyEntityExistsException("Student already Exists");
+        try {
+            student = new Student(username, password, name, email, course);
+            em.persist(student);
+            course.add(student);
+        } catch (Exception e) {
+            throw new Exception(e);
         }
-        student = new Student(username, password, name, email, course);
-        em.persist(student);
-        course.add(student);
         return em.find(Student.class, username);
     }
 
-    public Student update(String username, String password, String name, String email, long courseCode)
-        throws MyEntityExistsException, MyEntityNotFoundException {
-        Student student;
-        Course course;
-        try {
-            course = em.find(Course.class, courseCode);
-        } catch (Exception exception) {
+    public void update(String username, String password, String name, String email, long courseCode)
+        throws Exception, MyEntityExistsException, MyEntityNotFoundException {
+        Student student = em.find(Student.class, username);
+        Course course = em.find(Course.class, courseCode);
+        if (student == null)
+            throw new MyEntityExistsException("STUDENT DOES NOT EXIST");
+        if (course == null)
             throw new MyEntityNotFoundException("COURSE DOES NOT EXIST");
-        }
-        try {
-            student = em.find(Student.class, username);
-        } catch (Exception exception) {
-            throw new MyEntityExistsException("STUDENT ALREADY EXISTS");
-        }
         em.lock(student, LockModeType.OPTIMISTIC);
-
-        student.setPassword(password);
-        student.setName(name);
-        student.setEmail(email);
-        student.setCourse(course);
-        return student;
+        try {
+            student.setPassword(password);
+            student.setName(name);
+            student.setEmail(email);
+            student.setCourse(course);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
 
     public List<Student> getAllStudents() {

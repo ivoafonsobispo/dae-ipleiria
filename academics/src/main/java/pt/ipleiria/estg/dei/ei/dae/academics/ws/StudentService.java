@@ -94,15 +94,19 @@ public class StudentService {
     @POST
     @Path("/")
     public Response create(StudentDTO studentDTO)
-        throws MyEntityExistsException, MyEntityNotFoundException {
-
-        Student student = studentBean.create(
-            studentDTO.getUsername(),
-            studentDTO.getPassword(),
-            studentDTO.getName(),
-            studentDTO.getEmail(),
-            studentDTO.getCourseCode()
-        );
+        throws Exception, MyEntityExistsException, MyEntityNotFoundException {
+        Student student;
+        try {
+            student = studentBean.create(
+                studentDTO.getUsername(),
+                studentDTO.getPassword(),
+                studentDTO.getName(),
+                studentDTO.getEmail(),
+                studentDTO.getCourseCode()
+            );
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
 
         return Response.status(Response.Status.CREATED)
             .entity(toDTO(student))
@@ -112,9 +116,8 @@ public class StudentService {
     @PUT
     @Path("/{username}")
     public Response update(@PathParam("username") String username, StudentDTO studentDTO) {
-        Student student;
         try {
-            student = studentBean.update(
+            studentBean.update(
                 username,
                 studentDTO.getPassword(),
                 studentDTO.getName(),
@@ -124,6 +127,6 @@ public class StudentService {
         } catch (Exception exception) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        return Response.status(Response.Status.ACCEPTED).entity(toDTO(student)).build();
+        return Response.status(Response.Status.OK).entity("STUDENT_UPDATED").build();
     }
 }
