@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.academics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,7 +15,11 @@ public class CourseBean {
     @PersistenceContext
     EntityManager em;
 
-    public Course create(long code, String name) {
+    public Course create(long code, String name) throws MyEntityExistsException {
+        if (em.find(Course.class, code) != null)
+            throw new MyEntityExistsException(code + " - Course already Exists");
+
+
         Course course = new Course(code, name);
         em.persist(course);
         return em.find(Course.class, code);

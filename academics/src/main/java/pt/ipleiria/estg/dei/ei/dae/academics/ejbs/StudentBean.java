@@ -4,6 +4,7 @@ import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityNotFoundException;
 
@@ -11,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Stateless
@@ -19,22 +21,24 @@ public class StudentBean {
     EntityManager em;
 
     public Student create(String username, String password, String name, String email, long course_code)
-        throws MyEntityExistsException, MyEntityNotFoundException {
+        throws MyEntityExistsException, MyEntityNotFoundException, MyConstraintViolationException {
         Course course;
         Student student;
+        course = em.find(Course.class, course_code);
+
+        if (course == null)
+            throw new MyEntityNotFoundException(course_code +  " - Course does not Exist");
+
+        if (em.find(Student.class, username) != null)
+            throw new MyEntityExistsException(username + " - Student already Exists");
+
         try {
-            course = em.find(Course.class, course_code);
-        } catch (Exception exception) {
-            throw new MyEntityNotFoundException("Course does not Exist");
+            student = new Student(username, password, name, email, course);
+            em.persist(student);
+            course.add(student);
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(e);
         }
-        try {
-            em.find(Student.class, username);
-        } catch (Exception exception) {
-            throw new MyEntityExistsException("Student already Exists");
-        }
-        student = new Student(username, password, name, email, course);
-        em.persist(student);
-        course.add(student);
         return em.find(Student.class, username);
     }
 
@@ -42,16 +46,15 @@ public class StudentBean {
         throws MyEntityExistsException, MyEntityNotFoundException {
         Student student;
         Course course;
-        try {
-            course = em.find(Course.class, courseCode);
-        } catch (Exception exception) {
-            throw new MyEntityNotFoundException("COURSE DOES NOT EXIST");
-        }
-        try {
-            student = em.find(Student.class, username);
-        } catch (Exception exception) {
-            throw new MyEntityExistsException("STUDENT ALREADY EXISTS");
-        }
+        course = em.find(Course.class, courseCode);
+        if (course == null)
+            throw new MyEntityNotFoundException(courseCode +  " - Course does not Exist");
+
+        student = em.find(Student.class, username);
+
+        if (student == null)
+            throw new MyEntityExistsException(username + " - Student does not Exist");
+
         em.lock(student, LockModeType.OPTIMISTIC);
 
         student.setPassword(password);
@@ -67,7 +70,9 @@ public class StudentBean {
     }
 
     public Student find(String username) {
-        return em.find(Student.class, username);
+        Student student = em.find(Student.class, username);
+        Hibernate.initialize(student.getSubjects());
+        return student;
     }
 
     public void enrollStudentInSubject(String username, long subjectCode) {
@@ -89,5 +94,18 @@ public class StudentBean {
         }
         Hibernate.initialize(student.getSubjects());
         return student.getSubjects();
+    }
+
+    public void delete(String username, long courseCode) throws MyEntityNotFoundException,MyConstraintViolationException {
+        Student student = em.find(Student.class,username);
+        if (student == null)
+            throw new MyEntityNotFoundException(username + " - Student does not Exist");
+        Course course = em.find(Course.class,courseCode);
+        try {
+            course.remove(student);
+            em.remove(student);
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(e);
+        }
     }
 }

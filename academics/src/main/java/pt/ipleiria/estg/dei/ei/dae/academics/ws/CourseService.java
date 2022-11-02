@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.academics.ws;
 import pt.ipleiria.estg.dei.ei.dae.academics.dtos.CourseDTO;
 import pt.ipleiria.estg.dei.ei.dae.academics.ejbs.CourseBean;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -41,13 +42,11 @@ public class CourseService {
 
     @POST
     @Path("/")
-    public Response createNewCourse(CourseDTO courseDTO) {
+    public Response create(CourseDTO courseDTO) throws MyEntityExistsException {
         Course newCourse;
-        try {
             newCourse = courseBean.create(courseDTO.getCode(), courseDTO.getName());
-        } catch (Exception exception) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        return Response.status(Response.Status.CREATED).entity(toDTO(newCourse)).build();
-    }
+
+        return Response.status(Response.Status.CREATED)
+                .entity(toDTO(newCourse))
+                .build();    }
 }

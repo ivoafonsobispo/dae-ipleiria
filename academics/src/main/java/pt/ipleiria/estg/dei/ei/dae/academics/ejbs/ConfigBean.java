@@ -26,14 +26,17 @@ public class ConfigBean {
     public void populateDB() {
         System.out.println("Hello Java EE!");
 
-        // Creates Courses in DB
-        courseBean.create(9119, "Engenharia Informatica");
-        courseBean.create(9200, "Engenharia dos Engenheiros");
-
+        try {
+            courseBean.create(9119, "Engenharia Informatica");
+            courseBean.create(9200, "Engenharia dos Engenheiros");
+        } catch (Exception exception) {
+            logger.severe(exception.getMessage());
+        }
         // Creates Student in DB
         try {
-            studentBean.create("ivoafonsobispo", "yesyes", "Ivo Afonso Bispo", "ivoafobispo@gmail.com", 9119);
-            studentBean.create("anamartin", "agostosa", "Ana Luisa Pinto Martin", "anamartin@gmail.com", 9119);
+            studentBean.create("ivoafonsobispo", "password", "Ivo Afonso Bispo", "ivoafobispo@gmail.com", 9119);
+            studentBean.create("anamartin", "password", "Ana Luisa Pinto Martin", "anamartin@gmail.com", 9119);
+            //studentBean.create("anamartin", "password", "Log of Error", "anamartin@gmail.com", 9119);
         } catch (Exception exception) {
             logger.severe(exception.getMessage());
         }
