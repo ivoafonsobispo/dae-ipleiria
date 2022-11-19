@@ -46,6 +46,7 @@ public class ConfigBean {
         subjectBean.create(2, "Matematica", courseBean.find(9119), 2005, 2);
 
         studentBean.enrollStudentInSubject("ivoafonsobispo", 1);
+        studentBean.enrollStudentInSubject("ivoafonsobispo", 2);
         studentBean.enrollStudentInSubject("anamartin", 1);
 
         administratorBean.create("josematias", "omatias", "Jose Matias", "josematias@mail.pt");

@@ -107,4 +107,12 @@ Content-Type: application/json
   "courseCode": 9119
 }
 
+### Send Email
+POST http://localhost:8080/academics/api/students/ivoafonsobispo/email/send
+Content-Type: application/json
+
+{
+  "subject": "This is the subject",
+  "message": "This is the message"
+}
 

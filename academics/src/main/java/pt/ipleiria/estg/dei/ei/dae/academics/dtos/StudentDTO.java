@@ -14,10 +14,10 @@ public class StudentDTO implements Serializable {
     String password, name, email;
     long courseCode;
     String courseName;
-    List<SubjectDTO> subjectDTOS;
+    List<SubjectDTO> subjects;
 
     public StudentDTO() {
-        subjectDTOS = new LinkedList<>();
+        subjects = new LinkedList<>();
     }
 
     public StudentDTO(String username, String password, String name, String email,long courseCode, String courseName) {
@@ -27,7 +27,7 @@ public class StudentDTO implements Serializable {
         this.email = email;
         this.courseCode = courseCode;
         this.courseName = courseName;
-        subjectDTOS = new LinkedList<>();
+        subjects = new LinkedList<>();
     }
 
     public StudentDTO(String username, String password, String name, String email,long courseCode, String courseName, List<SubjectDTO> subjectDTOS) {
@@ -37,7 +37,7 @@ public class StudentDTO implements Serializable {
         this.email = email;
         this.courseCode = courseCode;
         this.courseName = courseName;
-        this.subjectDTOS = subjectDTOS;
+        this.subjects = subjectDTOS;
     }
 
     public String getUsername() {
@@ -88,11 +88,11 @@ public class StudentDTO implements Serializable {
         this.courseName = courseName;
     }
 
-    public List<SubjectDTO> getSubjectDTOS() {
-        return subjectDTOS;
+    public List<SubjectDTO> getSubjects() {
+        return subjects;
     }
 
-    public void setSubjectDTOS(List<SubjectDTO> subjectDTOS) {
-        this.subjectDTOS = subjectDTOS;
+    public void setSubjects(List<SubjectDTO> subjects) {
+        this.subjects = subjects;
     }
 }

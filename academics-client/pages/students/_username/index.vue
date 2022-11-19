@@ -14,7 +14,7 @@
       :fields="subjectFields"
     />
     <p v-else>No subjects enrolled.</p>
-    <nuxt-link to="/students/all">Back</nuxt-link>
+    <nuxt-link to="/students">Back</nuxt-link>
   </b-container>
 </template>
 <script>
