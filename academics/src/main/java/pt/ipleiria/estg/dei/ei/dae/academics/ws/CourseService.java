@@ -4,7 +4,9 @@ import pt.ipleiria.estg.dei.ei.dae.academics.dtos.CourseDTO;
 import pt.ipleiria.estg.dei.ei.dae.academics.ejbs.CourseBean;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
 import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.academics.security.Authenticated;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +43,8 @@ public class CourseService {
     }
 
     @POST
+    @Authenticated
+    @RolesAllowed({"Administrator"})
     @Path("/")
     public Response create(CourseDTO courseDTO) throws MyEntityExistsException {
         Course newCourse;

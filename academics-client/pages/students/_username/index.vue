@@ -15,6 +15,8 @@
     />
     <p v-else>No subjects enrolled.</p>
     <nuxt-link to="/students">Back</nuxt-link>
+      &nbsp;
+      <nuxt-link :to="`/students/${this.username}/send-email`">Send e-mail</nuxt-link>
   </b-container>
 </template>
 <script>

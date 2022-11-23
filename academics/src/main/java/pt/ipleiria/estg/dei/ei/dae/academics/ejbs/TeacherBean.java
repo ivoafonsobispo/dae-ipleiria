@@ -4,8 +4,10 @@ import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Teacher;
+import pt.ipleiria.estg.dei.ei.dae.academics.security.Hasher;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -14,13 +16,15 @@ import java.util.List;
 public class TeacherBean {
     @PersistenceContext
     EntityManager em;
+    @Inject // import javax.inject.Inject;
+    private Hasher hasher;
 
     public List<Teacher> getAllTeachers() {
         return (List<Teacher>) em.createNamedQuery("getAllTeachers").getResultList();
     }
 
     public Teacher create(String username, String password, String name, String email, String office) {
-        Teacher teacher = new Teacher(username, password, name, email, office);
+        Teacher teacher = new Teacher(username, hasher.hash(password), name, email, office);
         em.persist(teacher);
         return em.find(Teacher.class, username);
     }

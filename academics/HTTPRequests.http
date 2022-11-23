@@ -116,3 +116,22 @@ Content-Type: application/json
   "message": "This is the message"
 }
 
+### REQUEST JWT TOKEN
+POST http://localhost:8080/academics/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+ "username": "ivoafonsobispo",
+ "password": "password"
+}
+
+### GET ALL STUDENTS
+GET http://localhost:8080/academics/api/students
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpdm9hZm9uc29iaXNwbyIsImlhdCI6MTY2OTIxMTE3MywiZXhwIjoxNjY5MjE0NzczfQ.kXw-GpzguUWOtYdogL06KgObi20eq3xbjwKpSgkTh2A
+
+### GET SPECIFIC STUDENT
+GET http://localhost:8080/academics/api/students/ivoafonsobispo
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpdm9hZm9uc29iaXNwbyIsImlhdCI6MTY2OTIxMTE3MywiZXhwIjoxNjY5MjE0NzczfQ.kXw-GpzguUWOtYdogL06KgObi20eq3xbjwKpSgkTh2A

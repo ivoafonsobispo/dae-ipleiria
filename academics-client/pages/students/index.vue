@@ -8,6 +8,7 @@
           <nuxt-link
             class="btn btn-link"
             :to="`/students/${row.item.username}`">Details</nuxt-link>
+            <nuxt-link :to="`/students/${row.item.username}/send-email`">Send email</nuxt-link>
         </template>
       </b-table>
       <nuxt-link to="/">Back</nuxt-link>
